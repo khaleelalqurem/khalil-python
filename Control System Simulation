@@ -1,0 +1,52 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+Kp = 0.1
+Ki = 0.05
+Kd = 0.01
+
+time_steps = 200
+dt = 0.1
+target_pressure = 50
+
+current_pressure = 50
+integral = 0
+previous_error = 0
+
+pressure_values = []
+control_values = []
+
+for t in range(time_steps):
+    error = target_pressure - current_pressure
+    integral += error * dt
+    derivative = (error - previous_error) / dt if t > 0 else 0
+    control_signal = Kp * error + Ki * integral + Kd * derivative
+    current_pressure += control_signal * dt
+    current_pressure = np.clip(current_pressure, 20, 80)
+    pressure_values.append(current_pressure)
+    control_values.append(control_signal)
+    previous_error = error
+
+time = np.arange(0, time_steps * dt, dt)
+
+plt.figure(figsize=(12, 6))
+
+plt.subplot(2, 1, 1)
+plt.plot(time, pressure_values, label="Pressure")
+plt.axhline(y=20, color='r', linestyle='--', label="Min Pressure")
+plt.axhline(y=80, color='r', linestyle='--', label="Max Pressure")
+plt.axhline(y=target_pressure, color='g', linestyle='--', label="Target Pressure")
+plt.title("Pressure vs Time")
+plt.xlabel("Time (s)")
+plt.ylabel("Pressure")
+plt.legend()
+
+plt.subplot(2, 1, 2)
+plt.plot(time, control_values, label="Control Signal", color='orange')
+plt.title("Control Signal vs Time")
+plt.xlabel("Time (s)")
+plt.ylabel("Control Signal")
+plt.legend()
+
+plt.tight_layout()
+plt.show()
