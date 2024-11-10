@@ -1,0 +1,36 @@
+import numpy as np
+import pandas as pd
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+np.random.seed(42)
+
+machine_1 = np.random.normal(50, 5, 1000)
+machine_2 = np.random.normal(100, 20, 1000)
+machine_3 = np.random.normal(200, 50, 1000)
+
+labels = ['Type_A']*500 + ['Type_B']*500 + ['Type_C']*500
+
+data = pd.DataFrame({
+    'sensor_1': np.concatenate([machine_1, machine_2, machine_3]),
+    'sensor_2': np.concatenate([machine_1, machine_2, machine_3]),
+    'label': labels
+})
+
+X = data[['sensor_1', 'sensor_2']]
+y = data['label']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+model = KNeighborsClassifier(n_neighbors=5)
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+
+accuracy = accuracy_score(y_test, y_pred)
+print("Accuracy:", accuracy)
+
+new_machine = np.array([[75, 80]])
+predicted_class = model.predict(new_machine)
+print("Predicted Class for the new machine:", predicted_class[0])
