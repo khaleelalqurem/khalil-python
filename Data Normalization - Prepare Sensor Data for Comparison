@@ -1,0 +1,30 @@
+import numpy as np
+import pandas as pd
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
+
+np.random.seed(42)
+
+machine_1 = np.random.normal(50, 5, 1000)
+machine_2 = np.random.normal(100, 20, 1000)
+machine_3 = np.random.normal(200, 50, 1000)
+
+data = pd.DataFrame({
+    'machine_1': machine_1,
+    'machine_2': machine_2,
+    'machine_3': machine_3
+})
+
+min_max_scaler = MinMaxScaler()
+normalized_data = min_max_scaler.fit_transform(data)
+
+standard_scaler = StandardScaler()
+standardized_data = standard_scaler.fit_transform(data)
+
+normalized_df = pd.DataFrame(normalized_data, columns=data.columns)
+standardized_df = pd.DataFrame(standardized_data, columns=data.columns)
+
+print("Normalized Data:")
+print(normalized_df.head())
+
+print("\nStandardized Data:")
+print(standardized_df.head())
