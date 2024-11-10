@@ -1,0 +1,44 @@
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, classification_report
+
+np.random.seed(42)
+
+homework_scores = np.random.normal(75, 10, 1000)
+exam_scores = np.random.normal(70, 15, 1000)
+
+performance = []
+for hw, exam in zip(homework_scores, exam_scores):
+    if hw >= 85 and exam >= 85:
+        performance.append('High Achiever')
+    elif hw >= 60 and exam >= 60:
+        performance.append('Pass')
+    else:
+        performance.append('Fail')
+
+data = pd.DataFrame({
+    'homework': homework_scores,
+    'exam': exam_scores,
+    'performance': performance
+})
+
+data['performance_index'] = (data['homework'] + data['exam']) / 2
+
+X = data[['homework', 'exam', 'performance_index']]
+y = data['performance']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=42)
+
+model = LogisticRegression(max_iter=200)
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+
+accuracy = accuracy_score(y_test, y_pred)
+report = classification_report(y_test, y_pred)
+
+print("Accuracy:", accuracy)
+print("Classification Report:")
+print(report)
